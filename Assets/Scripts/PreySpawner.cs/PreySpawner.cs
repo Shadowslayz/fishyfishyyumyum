@@ -4,7 +4,8 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 
-public class PreySpawner : MonoBehaviour {
+public class PreySpawner : MonoBehaviour
+{
     public static PreySpawner Instance { get; private set; }
     public GameObject fishPrefab;
     public GameObject newFishSprite;
@@ -64,7 +65,7 @@ public class PreySpawner : MonoBehaviour {
 
 
     void Start()
-    {   
+    {
         Instance = this;
         var raffleMap = inputActions.FindActionMap("Raffle");
 
@@ -140,14 +141,18 @@ public class PreySpawner : MonoBehaviour {
             }
         }
 
-                
+
         // Winner queue processing
-        if (RaffleHungerManager.Instance.IsRaffleMode && winnerQueue.Count > 0 && RaffleHungerManager.Instance.Hunger > 0) {
+        if (RaffleHungerManager.Instance.IsRaffleMode && winnerQueue.Count > 0 && RaffleHungerManager.Instance.Hunger > 0)
+        {
             winnerCheckTimer += Time.deltaTime;
-            if (winnerCheckTimer >= winnerQueueDelay) {
+            if (winnerCheckTimer >= winnerQueueDelay)
+            {
                 var meta = winnerQueue.Dequeue();
-                if (!WinnerManager.Instance.IsWinner(meta.email)) {
-                    WinnerManager.Instance.AddWinner(new WinnerEntry {
+                if (!WinnerManager.Instance.IsWinner(meta.email))
+                {
+                    WinnerManager.Instance.AddWinner(new WinnerEntry
+                    {
                         id = meta.id,
                         name = meta.name,
                         email = meta.email,
@@ -156,7 +161,9 @@ public class PreySpawner : MonoBehaviour {
                     });
                     RaffleHungerManager.Instance.DecrementHunger();
                     Debug.Log($"Winner processed: {meta.name} ({meta.email}) - Hunger now: {RaffleHungerManager.Instance.Hunger}");
-                } else {
+                }
+                else
+                {
                     Debug.Log($"Duplicate winner skipped: {meta.email}");
                 }
                 winnerCheckTimer = 0f;
@@ -208,9 +215,29 @@ public class PreySpawner : MonoBehaviour {
                     // Spawn fish with opt-in texture for raffle (only if hunger > 0)
                     if (selectedHunger > 0)
                     {
-                        for (int p = 0; p < fishCount; p++)
-                            SpawnFishWithOptInTexture();
+                        string[] files = Directory.GetFiles(texturesPath, "*.png");
+                        List<string> eligible = new List<string>();
+
+                        foreach (string file in files)
+                        {
+                            string fileName = Path.GetFileNameWithoutExtension(file);
+                            string[] parts = fileName.Split('_');
+                            if (parts.Length >= 4)
+                            {
+                                string email = parts[2];
+                                if (!string.IsNullOrEmpty(email) && email != "\"\"")
+                                    eligible.Add(file);
+                            }
+                        }
+
+                        foreach (string file in eligible)
+                        {
+                            string texId = Path.GetFileNameWithoutExtension(file);
+                            for (int j = 0; j < 2; j++) // spawn exactly 2
+                                SpawnFishWithExactTexture(texId, file);
+                        }
                     }
+
 
                     Debug.Log($"Raffle Mode Started with {selectedHunger} Hunger!");
                     Debug.Log("Hunger remaining: " + RaffleHungerManager.Instance.Hunger);
@@ -239,7 +266,7 @@ public class PreySpawner : MonoBehaviour {
             RaffleHungerManager.Instance.StopRaffleMode();
             RemoveAllFishExceptOne();
             Debug.Log("Raffle Mode Exited");
-            
+
             // Respawn initial fish count after raffle ends
             for (int i = 0; i < fishCount; i++) SpawnFish();
         }
@@ -300,64 +327,44 @@ public class PreySpawner : MonoBehaviour {
         Debug.Log("Press 1-0 to set hunger for raffle!");
         waitingForHungerInput = true;
     }
-
-    void SpawnFishWithOptInTexture()
+    void SpawnFishWithExactTexture(string texId, string texFile)
     {
         Vector3 pos = GetSpawnPosition();
         GameObject fish = Instantiate(fishPrefab, pos, Quaternion.identity);
-        var smr = fish.GetComponentInChildren<SkinnedMeshRenderer>(true);
-        if (smr != null)
-        {
-            smr.gameObject.SetActive(true);
-            smr.enabled = true;
-        }
-        // Filter loadedTextures for those with non-empty email in filename,
-        // and remember their parts for metadata
-        List<(Texture2D tex, string[] parts)> optInTextures = new List<(Texture2D, string[])>();
-        string[] files = Directory.GetFiles(texturesPath, "*.png");
-        for (int i = 0; i < files.Length; i++)
-        {
-            string fileName = Path.GetFileNameWithoutExtension(files[i]);
-            string[] parts = fileName.Split('_');
-            if (parts.Length >= 4)
-            {
-                string email = parts[2];
-                if (!string.IsNullOrEmpty(email) && email != "\"\"")
-                {
-                    if (i < loadedTextures.Count)
-                        optInTextures.Add((loadedTextures[i], parts));
-                }
-            }
-        }
 
-        if (optInTextures.Count > 0)
-        {
-            // Pick random eligible texture & metadata
-            var selected = optInTextures[Random.Range(0, optInTextures.Count)];
-            Renderer rend = fish.GetComponentInChildren<Renderer>();
-            if (rend != null && rend.material != null)
-            {
-                rend.material.mainTexture = selected.tex;
-            }
+        // Load the texture
+        byte[] bytes = File.ReadAllBytes(texFile);
+        Texture2D tex = new Texture2D(2, 2);
+        tex.LoadImage(bytes);
 
-            // Attach metadata
+        Renderer rend = fish.GetComponentInChildren<Renderer>();
+        if (rend != null && rend.material != null)
+            rend.material.mainTexture = tex;
+
+        // Apply metadata from file name
+        string[] parts = texId.Split('_');
+        if (parts.Length >= 4)
+        {
             var meta = fish.AddComponent<FishMetadata>();
-            meta.id = selected.parts[0];
-            meta.name = selected.parts[1];
-            meta.email = selected.parts[2];
-            meta.ig = selected.parts[3];
+            meta.id = parts[0];
+            meta.name = parts[1];
+            meta.email = parts[2];
+            meta.ig = parts[3];
         }
 
+        // Random scale
         float randScale = Random.Range(minFishScale, maxFishScale);
         fish.transform.localScale = new Vector3(randScale, randScale, randScale);
         fish.SetActive(true);
     }
-    public void EnqueueWinner(string id, string name, string email, string ig) {
+    public void EnqueueWinner(string id, string name, string email, string ig)
+    {
         if (!RaffleHungerManager.Instance.IsRaffleMode) return;
         if (RaffleHungerManager.Instance.Hunger <= 0) return;
         if (WinnerManager.Instance.IsWinner(email)) return;
 
-        winnerQueue.Enqueue(new WinnerEntry {
+        winnerQueue.Enqueue(new WinnerEntry
+        {
             id = id,
             name = name,
             email = email,
@@ -452,7 +459,8 @@ public class PreySpawner : MonoBehaviour {
 
     }
 
-    void SpawnNonRespawningFish() {
+    void SpawnNonRespawningFish()
+    {
         if (nonRespawningFishPrefab == null) return;
         Vector3 pos = GetSpawnPosition();
         GameObject fish = Instantiate(nonRespawningFishPrefab, pos, Quaternion.identity);
@@ -484,33 +492,38 @@ public class PreySpawner : MonoBehaviour {
     }
 
 
-    Vector3 GetSpawnPosition() {
+    Vector3 GetSpawnPosition()
+    {
         Vector3 horizontal = GetRandomXZPosition();
         float surfaceY = GetWaterSurfaceY(horizontal, transform.position.y + 2f);
         float depth = Random.Range(0f, spawnHeight);
         return new Vector3(horizontal.x, surfaceY - depth, horizontal.z);
     }
 
-    Vector3 GetRandomXZPosition() {
+    Vector3 GetRandomXZPosition()
+    {
         float x = Random.Range(-spawnWidth / 2f, spawnWidth / 2f);
         float z = Random.Range(-spawnDepth / 2f, spawnDepth / 2f);
         return new Vector3(transform.position.x + x, 0f, transform.position.z + z);
     }
 
-    Vector3 GetRandomLocalOffset() {
+    Vector3 GetRandomLocalOffset()
+    {
         float x = Random.Range(-spawnWidth / 2f, spawnWidth / 2f);
         float y = -Random.Range(0f, spawnHeight);
         float z = Random.Range(-spawnDepth / 2f, spawnDepth / 2f);
         return new Vector3(x, y, z);
     }
 
-    float GetWaterSurfaceY(Vector3 positionXZ, float fallback) {
+    float GetWaterSurfaceY(Vector3 positionXZ, float fallback)
+    {
         return WaterSurfaceScript.Instance != null
             ? WaterSurfaceScript.Instance.GetWaterSurfaceHeight(positionXZ)
             : fallback;
     }
 
-    void OnDrawGizmosSelected() {
+    void OnDrawGizmosSelected()
+    {
         Gizmos.color = Color.cyan;
         Vector3 center = transform.position - new Vector3(0f, spawnHeight / 2f, 0f);
         Vector3 size = new Vector3(spawnWidth, spawnHeight, spawnDepth);

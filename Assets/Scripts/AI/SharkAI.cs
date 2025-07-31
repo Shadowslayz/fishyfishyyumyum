@@ -116,50 +116,53 @@ public class SharkAI : MonoBehaviour
         float lowerLimit = surfaceY + maxDepth;
         float offsetY = Mathf.Sin(Time.time * diveFrequency + verticalOffset) * diveAmplitude;
         smoothY = Mathf.SmoothDamp(smoothY, offsetY, ref smoothVelocity, 0.5f);
-
-        // --- Target searching logic ---
-        if ((currentTarget == null || targetTimer <= 0f) && noTargetTimeout <= 0f)
+        if (!(RaffleHungerManager.Instance != null && RaffleHungerManager.Instance.IsRaffleMode && RaffleHungerManager.Instance.Hunger <= 0f))
         {
-            Collider[] hits = Physics.OverlapSphere(eye, detectionRadius);
-            GameObject bestTarget = null;
-            float bestFishDist = float.MaxValue;
-            float bestPlanktonDist = float.MaxValue;
-
-            foreach (var hit in hits)
+            // --- Target searching logic ---
+            if ((currentTarget == null || targetTimer <= 0f) && noTargetTimeout <= 0f)
             {
-                Vector3 dir = hit.transform.position - eye;
-                float dist = dir.magnitude;
-                float horizAngle = Vector3.Angle(new Vector3(viewOrigin.forward.x, 0, viewOrigin.forward.z), new Vector3(dir.x, 0, dir.z));
-                float vertAngle = Vector3.Angle(new Vector3(0, viewOrigin.forward.y, viewOrigin.forward.z), new Vector3(0, dir.y, dir.z));
+                Collider[] hits = Physics.OverlapSphere(eye, detectionRadius);
+                GameObject bestTarget = null;
+                float bestFishDist = float.MaxValue;
+                float bestPlanktonDist = float.MaxValue;
 
-                if (horizAngle <= fovAngle / 2f && vertAngle <= verticalFOVAngle / 2f && dist <= fovDistance)
+                foreach (var hit in hits)
                 {
-                    if (hit.CompareTag("Fish") && dist < bestFishDist)
+                    Vector3 dir = hit.transform.position - eye;
+                    float dist = dir.magnitude;
+                    float horizAngle = Vector3.Angle(new Vector3(viewOrigin.forward.x, 0, viewOrigin.forward.z), new Vector3(dir.x, 0, dir.z));
+                    float vertAngle = Vector3.Angle(new Vector3(0, viewOrigin.forward.y, viewOrigin.forward.z), new Vector3(0, dir.y, dir.z));
+
+                    if (horizAngle <= fovAngle / 2f && vertAngle <= verticalFOVAngle / 2f && dist <= fovDistance)
                     {
-                        bestTarget = hit.gameObject;
-                        bestFishDist = dist;
-                    }
-                    else if (hit.CompareTag("Plankton") && bestTarget == null && dist < bestPlanktonDist)
-                    {
-                        bestTarget = hit.gameObject;
-                        bestPlanktonDist = dist;
+                        if (hit.CompareTag("Fish") && dist < bestFishDist)
+                        {
+                            bestTarget = hit.gameObject;
+                            bestFishDist = dist;
+                        }
+                        else if (hit.CompareTag("Plankton") && bestTarget == null && dist < bestPlanktonDist)
+                        {
+                            bestTarget = hit.gameObject;
+                            bestPlanktonDist = dist;
+                        }
                     }
                 }
-            }
 
-            if (bestTarget)
-            {
-                currentTarget = bestTarget;
-                targetTimer = bestTarget.CompareTag("Plankton") ? targetMemoryTime : 0f;
-                noTargetTimeout = 1.5f;
-                lastSeenTargetTime = Time.time;
+                if (bestTarget)
+                {
+                    currentTarget = bestTarget;
+                    targetTimer = bestTarget.CompareTag("Plankton") ? targetMemoryTime : 0f;
+                    noTargetTimeout = 1.5f;
+                    lastSeenTargetTime = Time.time;
+                }
             }
+            else
+            {
+                targetTimer -= Time.deltaTime;
+                noTargetTimeout -= Time.deltaTime;
+            }            
         }
-        else
-        {
-            targetTimer -= Time.deltaTime;
-            noTargetTimeout -= Time.deltaTime;
-        }
+
 
         freezeWhileLookingUp = false;
 
