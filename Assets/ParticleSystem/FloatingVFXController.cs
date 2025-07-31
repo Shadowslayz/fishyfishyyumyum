@@ -4,37 +4,30 @@ using UnityEngine.Rendering.HighDefinition;
 
 public class FloatingVFXController : MonoBehaviour
 {
-    [Header("VFX and Water")]
-    public VisualEffect vfx;
-    public WaterSurface waterSurface;
+    public VisualEffect vfx;               // The VFX Graph component
+    public WaterSurface waterSurface;      // Assign your HDRP Water Surface
+    public float offsetY = 0.1f;           // Slight height above water surface
 
-    [Header("Offset Above Water")]
-    public float offsetY = 0.2f;
-
-    private WaterSearchParameters search;
-    private WaterSearchResult result;
-
-    void Start()
-    {
-        search = new WaterSearchParameters();
-    }
+    WaterSearchParameters searchParams = new WaterSearchParameters();
+    WaterSearchResult searchResult = new WaterSearchResult();
 
     void Update()
     {
-        search.startPosition = transform.position;
+        if (waterSurface == null || vfx == null) return;
 
-        // Get water height
-        waterSurface.FindWaterSurfaceHeight(search, out result);
+        // Prepare water search
+        searchParams.startPositionWS = searchResult.candidateLocationWS;
+        searchParams.targetPositionWS = transform.position;
+        searchParams.error = 0.01f;
+        searchParams.maxIterations = 8;
 
-        // Move GameObject to water height
-        Vector3 newPosition = transform.position;
-        newPosition.y = result.height + offsetY;
-        transform.position = newPosition;
-
-        // Send to VFX Graph
-        if (vfx != null)
+        // Project onto water
+        if (waterSurface.ProjectPointOnWaterSurface(searchParams, out searchResult))
         {
-            vfx.SetVector3("CenterPosition", newPosition);
+            Vector3 projected = searchResult.projectedPositionWS;
+            projected.y += offsetY;
+            transform.position = projected;
+            vfx.SetVector3("CenterPosition", projected);
         }
     }
 }
