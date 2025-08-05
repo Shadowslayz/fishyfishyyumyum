@@ -14,16 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PixelRect:
     serializedVersion: 2
-    x: 0
-    y: 43
+    x: -660
+    y: 295
     width: 5120
     height: 1349
   m_ShowMode: 4
-  m_Title: Project
+  m_Title: Hierarchy
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
-  m_Maximized: 1
+  m_Maximized: 0
 --- !u!114 &2
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -209,7 +209,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 1
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: MaterialGraphEditWindow
+  m_Name: SceneView
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
@@ -218,16 +218,16 @@ MonoBehaviour:
     y: 0
     width: 3062
     height: 754
-  m_MinSize: {x: 52, y: 76}
+  m_MinSize: {x: 202, y: 226}
   m_MaxSize: {x: 4002, y: 4026}
-  m_ActualView: {fileID: 12}
+  m_ActualView: {fileID: 15}
   m_Panes:
   - {fileID: 15}
   - {fileID: 16}
   - {fileID: 13}
   - {fileID: 12}
-  m_Selected: 3
-  m_LastSelected: 0
+  m_Selected: 0
+  m_LastSelected: 3
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -677,7 +677,7 @@ MonoBehaviour:
     {\n        \"m_SerializableColors\": []\n    }\n}\n\n{\n    \"m_SGVersion\":
     0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.GroupData\",\n    \"m_ObjectId\":
     \"2a0fd82c3d524d158f64f319b0dbb868\",\n    \"m_Title\": \"Read From Simulation\",\n   
-    \"m_Position\": {\n        \"x\": -556.0000610351563,\n        \"y\": 89.0\n   
+    \"m_Position\": {\n        \"x\": -556.0001220703125,\n        \"y\": 88.99996948242188\n   
     }\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector3MaterialSlot\",\n   
     \"m_ObjectId\": \"2b21b375a29a4095b89247cb09221c3b\",\n    \"m_Id\": 1,\n   
     \"m_DisplayName\": \"Displacement\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\":
@@ -1044,8 +1044,8 @@ MonoBehaviour:
     2,\n    \"m_Value\": 0.0,\n    \"m_DefaultValue\": 0.0,\n    \"m_Labels\": []\n}\n\n{\n   
     \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.GroupData\",\n   
     \"m_ObjectId\": \"ab0657960ce64c418f090acef9b10025\",\n    \"m_Title\": \"Read
-    From Simulation\",\n    \"m_Position\": {\n        \"x\": 950.0001220703125,\n       
-    \"y\": -186.00001525878907\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
+    From Simulation\",\n    \"m_Position\": {\n        \"x\": 949.9998779296875,\n       
+    \"y\": -185.99996948242188\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
     \"UnityEditor.ShaderGraph.RedirectNodeData\",\n    \"m_ObjectId\": \"adaa91a2b8084a0a9c1c5f8828c551ae\",\n   
     \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Redirect Node\",\n   
     \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
@@ -1441,8 +1441,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Hierarchy\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 0
-    y: 79
+    x: -660
+    y: 331
     width: 982
     height: 728
   m_SerializedDataModeController:
@@ -1459,9 +1459,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
-      m_LastClickedID: 0
-      m_ExpandedIDs: 16fbffff
+      m_SelectedIDs: dabf0000
+      m_LastClickedID: 49114
+      m_ExpandedIDs: 16fbffff14bf0000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1507,8 +1507,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Scene\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 983
-    y: 79
+    x: 323
+    y: 331
     width: 3060
     height: 728
   m_SerializedDataModeController:
@@ -2037,9 +2037,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: 1872.2671, y: -11.818677, z: -1489.8505}
+    m_Target: {x: 1920.8512, y: 12.286869, z: -1492.8403}
     speed: 2
-    m_Value: {x: 1872.2671, y: -11.818677, z: -1489.8505}
+    m_Value: {x: 1920.8512, y: 12.286869, z: -1492.8403}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -2085,13 +2085,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.32264817, y: -0.27935645, z: 0.10076371, w: -0.898999}
+    m_Target: {x: -0.08574867, y: 0.7762436, z: -0.10725739, w: -0.6157123}
     speed: 2
-    m_Value: {x: -0.32264817, y: -0.27935645, z: 0.1007637, w: -0.8989989}
+    m_Value: {x: -0.08540462, y: 0.7778879, z: -0.1074866, w: -0.6132236}
   m_Size:
-    m_Target: 13.608618
+    m_Target: 11.901038
     speed: 2
-    m_Value: 13.608618
+    m_Value: 11.388554
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -2183,8 +2183,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Project\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 0
-    y: 833
+    x: -660
+    y: 1085
     width: 4044
     height: 513
   m_SerializedDataModeController:
@@ -2372,8 +2372,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 4045
-    y: 79
+    x: 3385
+    y: 331
     width: 1074
     height: 1267
   m_SerializedDataModeController:
